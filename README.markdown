@@ -144,6 +144,26 @@ def GET(self):
     return zipstream.ZipFile(path)
 ```
 
+### web2py
+```python
+def zipball():
+    import zipstream
+    import os
+    p = 'path/to/files'
+    z = zipstream.ZipFile(mode='w', compression=ZIP_DEFLATED)
+    for fname in os.listdir(p): 
+        fp = os.path.join(p,fname)
+        z.write(fp, fname)
+        
+    headers = {}  
+    headers['Content-Type']  =  'application/zip'
+    headers['Content-Disposition'] = 'attachment; filename="files.zip"'
+    def zipped_stream():
+        for chunk in z:
+            yield chunk
+    raise HTTP(200, zipped_stream(), **headers)
+```
+
 ## Running tests
 
 With python version > 2.6, just run the following command: `python -m unittest discover`
